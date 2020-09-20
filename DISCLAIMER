@@ -1,0 +1,15 @@
+DISCLAIMER:
+
+Currently this package is a research project, studying how to facilitate conversion of Stata(TM)* .do files to R.  The package uses commands that are inspired by the syntax of .do file commands. At my university, I own a licensed copy of Stata and looked the documentation for .do file syntax. Yet, the package has been written without looking at source code of Stata.
+
+Don't use this package if in your jurisdiction the syntax of a programming language, in particular the syntax of .do file commands, can be protected by copyright and your usage of this package would constitute an infringement of intellectual property of StataCorp. I will not take liability for any misuse of this package.
+
+To the best of my knowledge, programming languages are NOT protected by copyright in the EU and the US. See for example:
+
+http://www.out-law.com/en/articles/2013/january/computer-programming-languages-should-not-be-viewed-as-copyrightable-says-high-court-judge/
+
+http://en.wikipedia.org/wiki/Clone_%28computing%29
+
+*Stata is developed and trademarked by StatCorp
+
+Sebastian Kranz, Ulm University
