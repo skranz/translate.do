@@ -1,11 +1,12 @@
 replace.delimit.semicolon = function(txt) {
   restore.point("replace.delimit.semicolon")
-  rows = which(has.substr(tolower(txt), "#delimit"))
+  rows = which(has.substr(tolower(txt), "#delimit") | has.substr(tolower(txt), "#del"))
   if (length(rows)==0) return(txt)
 
   # Create alternating sequence of delimit; and delimit cr
   code = gsub(" ", "", tolower(txt[rows]), fixed=TRUE)
-  semi.delimit = has.substr(code, "#delimit;")
+  semi.delimit = has.substr(code, "#delimit;") | has.substr(code, "#del;")
+  if (sum(semi.delimit)==0) return(txt)
   
   use = rep(TRUE, length(rows))
   prev = FALSE

@@ -1,18 +1,38 @@
 example.normalize.do = function() {
   txt = readLines("C:/libraries/translate.do/example2.do")
-  txt = readLines("C:/libraries/translate.do/teachers_incentives_data/Incentives_FINAL/Programs/Table 9 Post.do")  
+  txt = readLines("C:/libraries/translate.do/teachers_incentives_data/Incentives_FINAL/Programs/Table 9 Mid Panel BEF.do")  
   
   do.files = list.files("C:/libraries/translate.do/",glob2rx("*.do"),full.names = TRUE,recursive = TRUE)
   
   
-  file = do.files[35]
+  tab = lapply(do.files, function(file) {
+    txt = readLines(file) 
+    cat("\n", file)
+    writeLines(txt,"temp.do")
+    pho = normalize.do(txt)
+    tab = do.to.table(pho=pho)
+    tab$file = file
+    tab
+  }) %>% bind_rows() %>% filter(cmd != "")
+  
+  agg = tab %>%
+    filter(cmd != "") %>%
+    group_by(cmd) %>%
+    summarize(
+      count = n()
+    ) %>%
+    arrange(-count)
+  
+  
+  file = "C:/libraries/translate.do/teachers_incentives_data/Incentives_FINAL/Programs/Table 9 Mid Panel BEF.do"
   txt = readLines(file)  
   writeLines(txt,"temp.do")
   pho = normalize.do(txt)
-
+  writeLines(pho$str,"temp.do")
+  
   tab = do.to.table(pho=pho)
-  
-  
+
+    
   cat(merge.lines(pho.txt))
   pho
   org = replace.placeholders(merge.lines(pho$str), pho$ph.df)
@@ -25,6 +45,7 @@ example.normalize.do = function() {
 
 normalize.do = function(txt) {
   restore.point("normalize.do")  
+  txt = trimws(sep.lines(txt))
   
   txt = merge.lines(txt)
   pho = blocks.to.placeholder(txt, start=c("/*"), end=c("*/"), ph.prefix = "#~co")
@@ -47,7 +68,13 @@ normalize.do = function(txt) {
 
   
   # Comment lines starting with * to ph
-  pho = lines.to.placeholder(txt, which(startsWith(txt, "*")),ph.df=ph.df, ph.prefix = "#~cl")
+  # We first need to remove inline placeholders that might be put before
+  # the *
+  # otherwise we might not detect a * line
+  ph.empty = ph.df %>% filter(startsWith(ph, "#~co")) %>% mutate(content="")
+  temp.txt =  replace.placeholders(txt, ph.empty) %>% trimws()
+  rows = which(startsWith(temp.txt, "*"))
+  pho = lines.to.placeholder(txt,rows,ph.df=ph.df, ph.prefix = "#~cl")
   txt = pho$str; ph.df = pho$ph.df
   
   # End of line comments starting with // to ph
@@ -101,6 +128,13 @@ do.to.table = function(txt=pho$str, ph.df=pho$ph.df, pho) {
   colon3 = str.left.of(str, ":",not.found = NA) %>% trimws()
   str = str.right.of(str, ":") %>% trimws()
   str = gsub("~;~\\",":\\", str, fixed=TRUE)
+  
+  # Some commands use : in a different way. Then don't store colon stuff
+  no.colon = which(startsWith(txt, "merge"))
+  if (length(no.colon) > 0) {
+    colon1[no.colon] = colon2[no.colon] = colon3[no.colon] = NA
+    str[no.colon] = txt[no.colon]
+  }
   
   str = gsub(","," ,", str, fixed=TRUE)
   cmd = str.left.of(str," ")
