@@ -7,5 +7,4 @@ Author: Sebastian Kranz, Ulm University
 Maintainer: Sebastian Kranz <sebastian.kranz@uni-ulm.de>
 Description: Tools helping to convert Stata .do files to R
 License: ** Preliminary version. Don't distribute without permission. ** 
-Imports: sktools, stringtools,pryr, restorepoint, foreign, data.table, dplyr, lubridate
-Depends: sktools, stringtools,pryr, restorepoint, foreign, data.table, dplyr, lubridate
+Depends: sktools, stringtools,pryr, dplyr, restorepoint, foreign, data.table, dplyr, lubridate

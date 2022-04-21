@@ -6,7 +6,7 @@ examples.translate.do.file = function() {
   library(restorepoint)
   options(warn=2) 
   
-  setwd("D:/libraries/translate.do/moral_hazard")
+  setwd("C:/libraries/translate.do/moral_hazard")
   translate.do.file("summaries_olds_news_g.do")
   
   setwd("D:/libraries/rs/adapation_vertical/programs/desc_stats")
